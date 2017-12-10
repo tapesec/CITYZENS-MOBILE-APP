@@ -1,0 +1,22 @@
+<resources>
+    <string name="base_url">http://192.168.0.14:3000</string>
+
+    <string name="app_name">Cityzen</string>
+    <string name="signin_email_hint">lucabrx@gmail.com</string>
+    <string name="signin_pass_hint">.(|:(:&amp;$/$%^</string>
+    <string name="signin_terms">I agree to the Terms of Use and Privacy Policy</string>
+    <string name="signin_submit">Allonzo !</string>
+    <string name="signin_signup">S\'inscrire</string>
+
+    <string name="title_activity_maps">Cityzen</string>
+    <string name="fetch_hotspot">fetch</string>
+    <string name="title_activity_maps_activityzzeae">Map</string>
+
+    <string name="post_hotspot_title">Title</string>
+    <string name="post_hotspot_insee">INSEE</string>
+    <string name="post_hotspot_message">Speak you mind !</string>
+
+    <string name="post_hotspot_send">Send</string>
+    <string name="post_hotspot_cancel">Cancel</string>
+    
+</resources>
