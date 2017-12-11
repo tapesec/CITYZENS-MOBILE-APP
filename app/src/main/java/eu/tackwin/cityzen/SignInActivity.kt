@@ -29,10 +29,10 @@ class SignInActivity : AppCompatActivity(), AuthListener {
 
 		if (!isConnected()){
 			AlertDialog.Builder(this)
-					.setTitle("No connection")
-					.setMessage("Check your internet connection")
-					.setPositiveButton("Ok") { _, _ -> }
-					.show()
+				.setTitle("No connection")
+				.setMessage("Check your internet connection")
+				.setPositiveButton("Ok") { _, _ -> }
+				.show()
 		}
 	}
 
@@ -70,7 +70,7 @@ class SignInActivity : AppCompatActivity(), AuthListener {
 
 	fun signinPressed(view: View) {
 		Auth(getString(R.string.base_url) + "/auth/token", email_input.text.toString(),
-				password_input.text.toString(), this
+			password_input.text.toString(), this
 		)
 	}
 

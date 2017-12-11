@@ -1,8 +1,8 @@
 package eu.tackwin.cityzen.Model
 
-import com.google.android.gms.maps.GoogleMap
+import android.os.Parcel
+import android.os.Parcelable
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import org.json.JSONObject
 import java.io.Serializable
@@ -19,19 +19,32 @@ class HotspotInfo(
 	val position: LatLng = LatLng(0.0, 0.0),
 	val address_city: String = "", // temp need to make a address object
 	val address_name: String = "",
-	val author_pseudo: String = "", // temp need to make an author object
-	val messages: MutableList<MessageInfo>,
-	val message: String = "", // temp need to make a message object
-	val message_created_at: Date = Date(),
-	val message_updated_at: Date? = null
-) : Serializable {
+	val author_pseudo: String = "" // temp need to make an author object
+) : Parcelable {
 
-	companion object {
+	constructor(parcel: Parcel) : this(
+			parcel.readString(),
+			parcel.readString(),
+			parcel.readString(),
+			if (parcel.readInt() == 0)
+				HotspotInfo.Scope.PUBLIC
+			else
+				HotspotInfo.Scope.PRIVATE,
+			LatLng(
+					parcel.readDouble(),
+					parcel.readDouble()
+			),
+			parcel.readString(),
+			parcel.readString(),
+			parcel.readString()
+	)
+
+	companion object CREATOR: Parcelable.Creator<HotspotInfo> {
+
 		fun createFromJson(json: JSONObject): HotspotInfo {
 			val pos = json["position"] as JSONObject
 			val address = json["address"] as JSONObject
 			val author = json["author"] as JSONObject
-			val content = json["content"] as JSONObject
 
 			val scope = if ((json["scope"] as String) == "public")
 				HotspotInfo.Scope.PUBLIC
@@ -46,20 +59,45 @@ class HotspotInfo(
 				LatLng(pos["latitude"] as Double, pos["longitude"] as Double),
 				address["city"] as String,
 				address["name"] as String,
-				author["pseudo"] as String,
-				mutableListOf(),
-				content["message"] as String,
-				Date(), // create an algorithm to convert from String
-				if (content.has("updatedAt")) Date() else null
+				author["pseudo"] as String
 			)
 		}
 
 		fun createMarkerOption(hotspotInfo: HotspotInfo): MarkerOptions
 			= MarkerOptions().position(hotspotInfo.position).title(hotspotInfo.title)
+
+		override fun createFromParcel(parcel: Parcel): HotspotInfo {
+			return HotspotInfo(parcel)
+		}
+
+		override fun newArray(size: Int): Array<HotspotInfo?> {
+			return arrayOfNulls(size)
+		}
 	}
 
 	enum class Scope {
 		PUBLIC,
 		PRIVATE
 	}
+
+	override fun writeToParcel(
+			parcel: Parcel,
+			flags: Int
+	) {
+		parcel.writeString(id)
+		parcel.writeString(title)
+		parcel.writeString(id_city)
+		parcel.writeInt(if (scope == Scope.PUBLIC) 0 else 1)
+		parcel.writeDouble(position.latitude)
+		parcel.writeDouble(position.longitude)
+		parcel.writeString(address_city)
+		parcel.writeString(address_name)
+		parcel.writeString(author_pseudo)
+	}
+
+	override fun describeContents(): Int {
+		return 0
+	}
+
+
 }

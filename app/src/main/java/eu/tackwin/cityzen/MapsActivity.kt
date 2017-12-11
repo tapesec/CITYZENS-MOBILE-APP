@@ -28,7 +28,6 @@ import eu.tackwin.cityzen.api.HotspotPost
 import eu.tackwin.cityzen.api.HotspotPostListener
 import org.json.JSONArray
 import org.json.JSONObject
-import java.text.SimpleDateFormat
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
 		HotspotGetListener, HotspotPostListener {
@@ -93,11 +92,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
 
 			Log.i("j", json.toString(4))
 
-			try {
-				hotspotsToAdd.add(HotspotInfo.createFromJson(json))
-			} catch (e: Throwable){
-
-			}
+			hotspotsToAdd.add(HotspotInfo.createFromJson(json))
 		}
 
 		runOnUiThread {

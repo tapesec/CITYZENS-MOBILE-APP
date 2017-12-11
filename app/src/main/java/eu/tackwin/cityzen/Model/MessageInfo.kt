@@ -16,7 +16,7 @@ class MessageInfo(
 		val pinned: Boolean,
 		val createdAt: Date,
 		val updatedAt: Date
-) : Serializable {
+) {
 
 	companion object {
 		fun createFromJson(json: JSONObject): MessageInfo{
@@ -26,7 +26,7 @@ class MessageInfo(
 				json["title"] as String,
 				json["body"] as String,
 				"god",
-				json["pinned"] as String == "true",
+				json["pinned"] as Boolean,
 				Date(),
 				Date()
 			)
