@@ -1,7 +1,6 @@
 package eu.tackwin.cityzen.Model
 
 import org.json.JSONObject
-import java.io.Serializable
 import java.util.*
 
 /**
@@ -14,6 +13,7 @@ class MessageInfo(
 		val body: String,
 		val author: String,//temp todo make an authorInfo
 		val pinned: Boolean,
+		val views: Int,
 		val createdAt: Date,
 		val updatedAt: Date
 ) {
@@ -27,6 +27,7 @@ class MessageInfo(
 				json["body"] as String,
 				"god",
 				json["pinned"] as Boolean,
+				0,
 				Date(),
 				Date()
 			)

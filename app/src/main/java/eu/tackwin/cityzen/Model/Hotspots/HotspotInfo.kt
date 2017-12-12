@@ -1,42 +1,49 @@
-package eu.tackwin.cityzen.Model
+package eu.tackwin.cityzen.Model.Hotspots
 
 import android.os.Parcel
 import android.os.Parcelable
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import eu.tackwin.cityzen.Model.AuthorInfo
 import org.json.JSONObject
-import java.io.Serializable
-import java.util.*
 
 /**
  * Created by tackw on 04/12/2017.
  */
-class HotspotInfo(
+open class HotspotInfo(
 	val id: String,
 	val title: String = "",
 	val id_city: String = "",
 	val scope: Scope = Scope.PUBLIC,
+	val type: Type = Type.WALL,
 	val position: LatLng = LatLng(0.0, 0.0),
 	val address_city: String = "", // temp need to make a address object
 	val address_name: String = "",
-	val author_pseudo: String = "" // temp need to make an author object
+	val author: AuthorInfo = AuthorInfo(
+			"",
+			""
+	) // temp need to make an author object
 ) : Parcelable {
 
 	constructor(parcel: Parcel) : this(
-			parcel.readString(),
-			parcel.readString(),
-			parcel.readString(),
-			if (parcel.readInt() == 0)
-				HotspotInfo.Scope.PUBLIC
-			else
-				HotspotInfo.Scope.PRIVATE,
-			LatLng(
-					parcel.readDouble(),
-					parcel.readDouble()
-			),
-			parcel.readString(),
-			parcel.readString(),
-			parcel.readString()
+		parcel.readString(),
+		parcel.readString(),
+		parcel.readString(),
+		if (parcel.readInt() == 0)
+			Scope.PUBLIC
+		else
+			Scope.PRIVATE,
+			Type.WALL,
+		LatLng(
+				parcel.readDouble(),
+				parcel.readDouble()
+		),
+		parcel.readString(),
+		parcel.readString(),
+			AuthorInfo(
+					parcel.readString(),
+					parcel.readString()
+			)
 	)
 
 	companion object CREATOR: Parcelable.Creator<HotspotInfo> {
@@ -47,19 +54,23 @@ class HotspotInfo(
 			val author = json["author"] as JSONObject
 
 			val scope = if ((json["scope"] as String) == "public")
-				HotspotInfo.Scope.PUBLIC
+				Scope.PUBLIC
 			else
-				HotspotInfo.Scope.PRIVATE
+				Scope.PRIVATE
 
 			return HotspotInfo(
-				json["id"] as String,
-				json["title"] as String,
-				json["idCity"] as String,
-				scope,
-				LatLng(pos["latitude"] as Double, pos["longitude"] as Double),
-				address["city"] as String,
-				address["name"] as String,
-				author["pseudo"] as String
+					json["id"] as String,
+					json["title"] as String,
+					(json["cityId"] ?: "") as String,
+					scope,
+					Type.WALL,
+					LatLng(
+						pos["latitude"] as Double,
+						pos["longitude"] as Double
+					),
+					address["city"] as String,
+					address["name"] as String,
+					AuthorInfo.createFromJson(author)
 			)
 		}
 
@@ -79,6 +90,11 @@ class HotspotInfo(
 		PUBLIC,
 		PRIVATE
 	}
+	enum class Type {
+		WALL,
+		EVENT,
+		ALERT
+	}
 
 	override fun writeToParcel(
 			parcel: Parcel,
@@ -92,7 +108,8 @@ class HotspotInfo(
 		parcel.writeDouble(position.longitude)
 		parcel.writeString(address_city)
 		parcel.writeString(address_name)
-		parcel.writeString(author_pseudo)
+		parcel.writeString(author.pseudo)
+		parcel.writeString(author.id)
 	}
 
 	override fun describeContents(): Int {

@@ -1,10 +1,9 @@
 package eu.tackwin.cityzen.api
 
-import android.util.Log
 import com.google.android.gms.maps.model.LatLng
 import eu.tackwin.cityzen.HttpTask.PostListener
 import eu.tackwin.cityzen.HttpTask.PostTask
-import eu.tackwin.cityzen.Model.HotspotInfo
+import eu.tackwin.cityzen.Model.Hotspots.HotspotInfo
 import org.json.JSONObject
 
 /**

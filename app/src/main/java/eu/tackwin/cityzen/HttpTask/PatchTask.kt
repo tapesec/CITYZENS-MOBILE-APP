@@ -4,21 +4,22 @@ import android.os.AsyncTask
 import android.util.Log
 import org.json.JSONObject
 import java.io.BufferedReader
-import java.io.DataOutputStream
 import java.io.InputStreamReader
 import java.lang.StringBuilder
 import java.net.HttpURLConnection
 import java.net.URL
 import java.net.URLEncoder
+import java.nio.charset.Charset
 import javax.net.ssl.HttpsURLConnection
 
+
 /**
- * Created by tackw on 05/12/2017.
+ * Created by tackw on 12/12/2017.
  */
-class PostTask(
-		private val postListener: PostListener,
+class PatchTask(
+		private val patchListener: PatchListener? = null,
 		private val headers: Map<String, String>? = null
-): AsyncTask<JSONObject, Int, ByteArray>() {
+) : AsyncTask<JSONObject, Int, ByteArray>() {
 
 	override fun doInBackground(vararg args: JSONObject?): ByteArray {
 		if (args.size < 2) return ByteArray(0)
@@ -32,17 +33,17 @@ class PostTask(
 
 		val body = args[1] as JSONObject
 
-		return sendPost(u, arg, body)
+		return sendPatch(u, arg, body)
 	}
 
-	private fun sendPost(baseUrl: String, params: JSONObject, body: JSONObject): ByteArray {
+	private fun sendPatch(baseUrl: String, params: JSONObject, body: JSONObject): ByteArray {
 		var connection: HttpURLConnection? = null
 
 		try {
 
 			var fullUrl = baseUrl
 
-			if (params.length() != 0){
+			if (params.length() != 0) {
 				val getData = StringBuilder()
 				getData.append('?')
 
@@ -58,12 +59,11 @@ class PostTask(
 					getData.append(URLEncoder.encode(params[it] as String, "UTF-8"))
 				}
 				fullUrl += getData.toString()
-
-				Log.d("POST", fullUrl)
 			}
 
 			val url = URL(baseUrl)
 			connection = url.openConnection() as HttpURLConnection
+
 
 			if (headers != null){
 				for (it in headers.asIterable()){
@@ -75,8 +75,7 @@ class PostTask(
 			}
 			connection.setRequestProperty("content-type", "application/json")
 
-			connection.requestMethod = "POST"
-
+			setRequestMethod(connection, "PATCH")
 			connection.doOutput = true
 
 			var output = StringBuilder()
@@ -99,19 +98,18 @@ class PostTask(
 			}
 
 			val bodyData = body.toString(0).toByteArray()
-			Log.i("data", output.toString())
+			Log.i("b", bodyData.toString(Charset.defaultCharset()))
 			connection.setRequestProperty("Content-Length", bodyData.size.toString())
 
 			connection.outputStream.write(bodyData)
 			connection.outputStream.flush()
 			connection.outputStream.close()
 
-
 			connection.connect()
 
 			BufferedReader(InputStreamReader(connection.inputStream)).use {
 				val response = it.readText().toByteArray()
-				postListener.postComplete(response)
+				patchListener?.patchComplete()
 				return response
 			}
 
@@ -128,23 +126,37 @@ class PostTask(
 				BufferedReader(InputStreamReader(connection.errorStream)).use {
 					val string = it.readText()
 					val response = string.toByteArray()
-					postListener.postFailure(
-							connection?.responseCode ?: 0,
-							connection?.responseMessage ?: "",
-							response
-					)
+					patchListener?.patchFailure()
 					Log.e("response body", string)
 					return response
 				}
 			}
 
-			postListener.postFailure(
-				connection?.responseCode ?: 0,
-				connection?.responseMessage ?: ""
-			)
+			patchListener?.patchFailure()
 
 			return ByteArray(0)
 		}
+	}
+
+	private fun setRequestMethod(c: HttpURLConnection, value: String) {
+		try {
+			val target: Any
+			if (c is HttpsURLConnection) {
+				val delegate = HttpsURLConnection::class.java!!.getDeclaredField("delegate")
+				delegate.isAccessible = true
+				target = delegate.get(c)
+			} else {
+				target = c
+			}
+			val f = HttpURLConnection::class.java.getDeclaredField("method")
+			f.isAccessible = true
+			f.set(target, value)
+		} catch (ex: IllegalAccessException) {
+			throw AssertionError(ex)
+		} catch (ex: NoSuchFieldException) {
+			throw AssertionError(ex)
+		}
+
 	}
 
 }

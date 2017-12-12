@@ -18,5 +18,7 @@
 
     <string name="post_hotspot_send">Send</string>
     <string name="post_hotspot_cancel">Cancel</string>
+
+    <string name="post_message">Post</string>
     
 </resources>

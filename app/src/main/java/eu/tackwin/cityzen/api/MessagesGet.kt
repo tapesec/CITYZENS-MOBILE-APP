@@ -40,6 +40,7 @@ class MessagesGet(
 			mArray.add(MessageInfo.createFromJson(jsonArray[i] as JSONObject))
 		}
 
+		Log.i("msg", str)
 		listener.messagesGetComplete(mArray.toList())
 	}
 

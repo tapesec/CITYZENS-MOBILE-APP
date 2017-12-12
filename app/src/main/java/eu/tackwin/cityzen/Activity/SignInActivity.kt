@@ -1,4 +1,4 @@
-package eu.tackwin.cityzen
+package eu.tackwin.cityzen.Activity
 
 import android.Manifest
 import android.app.AlertDialog
@@ -12,6 +12,8 @@ import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.util.Log
 import android.view.View
+import eu.tackwin.cityzen.Common
+import eu.tackwin.cityzen.R
 import eu.tackwin.cityzen.api.Auth
 import eu.tackwin.cityzen.api.AuthInfo
 import eu.tackwin.cityzen.api.AuthListener

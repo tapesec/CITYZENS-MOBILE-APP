@@ -1,18 +1,16 @@
-package eu.tackwin.cityzen
+package eu.tackwin.cityzen.Activity
 
 import android.content.Context
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
-import android.support.v7.widget.CardView
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.Spinner
-import android.widget.TextView
 
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -21,7 +19,8 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
-import eu.tackwin.cityzen.Model.HotspotInfo
+import eu.tackwin.cityzen.Model.Hotspots.HotspotInfo
+import eu.tackwin.cityzen.R
 import eu.tackwin.cityzen.api.HotspotGet
 import eu.tackwin.cityzen.api.HotspotGetListener
 import eu.tackwin.cityzen.api.HotspotPost
@@ -156,7 +155,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
 
 		val alert = AlertDialog.Builder(this)
 		alert.setView(promptView)
-		alert.setPositiveButton(R.string.post_hotspot_send, {
+		alert.setPositiveButton(
+				R.string.post_hotspot_send, {
 			_, _ ->
 			val title = promptView.findViewById<EditText>(R.id.post_title).text.toString()
 			val id_city = promptView.findViewById<EditText>(R.id.post_insee).text.toString()
@@ -172,7 +172,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
 				if (scope == "Public") HotspotInfo.Scope.PUBLIC else HotspotInfo.Scope.PRIVATE
 			)
 		})
-		alert.setNegativeButton(R.string.post_hotspot_cancel, {
+		alert.setNegativeButton(
+				R.string.post_hotspot_cancel, {
 			_, _ ->
 			Log.i("Bouh", "ler")
 		})
