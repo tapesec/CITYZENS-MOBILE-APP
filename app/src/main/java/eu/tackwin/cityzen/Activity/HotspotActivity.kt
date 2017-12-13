@@ -1,12 +1,16 @@
 package eu.tackwin.cityzen.Activity
 
+import android.support.v7.app.AlertDialog
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.LinearLayout
+import android.widget.Switch
 import android.widget.TextView
 import android.widget.ViewSwitcher
 import eu.tackwin.cityzen.Model.Hotspots.HotspotInfo
@@ -15,6 +19,8 @@ import eu.tackwin.cityzen.R
 import eu.tackwin.cityzen.api.HotspotViewPost
 import eu.tackwin.cityzen.api.MessagePatch
 import eu.tackwin.cityzen.api.MessagePatchListener
+import eu.tackwin.cityzen.api.MessagePost
+import eu.tackwin.cityzen.api.MessagePostListener
 import eu.tackwin.cityzen.api.MessagesGet
 import eu.tackwin.cityzen.api.MessagesGetListener
 import java.util.*
@@ -22,7 +28,7 @@ import java.util.*
 /**
  * Created by tackw on 09/12/2017.
  */
-class HotspotActivity: AppCompatActivity(), MessagesGetListener, MessagePatchListener {
+class HotspotActivity: AppCompatActivity(), MessagesGetListener, MessagePatchListener, MessagePostListener {
 
 	private lateinit var  hotspotInfo: HotspotInfo
 
@@ -31,9 +37,49 @@ class HotspotActivity: AppCompatActivity(), MessagesGetListener, MessagePatchLis
 	override fun onCreate(savedInstance: Bundle?) {
 		super.onCreate(savedInstance)
 		setContentView(R.layout.activity_hotspot)
+		//setSupportActionBar(findViewById(R.id.action))
 
 		hotspotInfo = intent.getParcelableExtra<HotspotInfo>("hotspot") as HotspotInfo
 		populateHotspot(hotspotInfo)
+	}
+
+	override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+		menuInflater.inflate(R.menu.action_hotspot, menu)
+		return true
+	}
+
+	override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+		when(item!!.itemId){
+			R.id.action_new -> onAddMessage()
+			R.id.action_delete -> onDeleteMessage()
+		}
+
+		return true
+	}
+
+	private fun onAddMessage() {
+		val view = layoutInflater.inflate(R.layout.post_message_alert, null)
+		val alert = AlertDialog.Builder(this)
+		alert.setView(view)
+		alert.setPositiveButton(R.string.post_message_post, { _, _ ->
+
+			val title = view.findViewById<EditText>(R.id.title).text.toString()
+			val body = view.findViewById<EditText>(R.id.body).text.toString()
+			val pinned = view.findViewById<Switch>(R.id.pinned).isActivated
+
+			MessagePost(
+				resources.getString(R.string.base_url), hotspotInfo.id, title, body, pinned,this
+			)
+		})
+		alert.setNegativeButton(R.string.post_message_cancel, { _, _ ->
+			Log.i(":(", "...")
+		})
+
+		alert.create().show()
+	}
+
+	private fun onDeleteMessage() {
+
 	}
 
 	private fun populateHotspot(hotspotInfo: HotspotInfo){

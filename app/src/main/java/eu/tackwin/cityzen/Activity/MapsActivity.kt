@@ -75,10 +75,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
 	fun onFetch(view: View?){
 		val bounds = google_map.projection.visibleRegion.latLngBounds
 		HotspotGet(
-				getString(R.string.base_url),
-				null,
-				bounds,
-				this
+			getString(R.string.base_url),
+			null,
+			bounds,
+			this
 		)
 	}
 

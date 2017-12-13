@@ -5,19 +5,10 @@
     android:id="@+id/cardView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
     android:layout_margin="5dp"
     app:cardBackgroundColor="@android:color/darker_gray"
     app:cardCornerRadius="2dp"
     app:cardElevation="24dp">
-
-
-    <!-- Les CardView possèdent des attributs supplémentaires dont
-         - cardBackgroundColor
-         - cardElevation pour l'élévation (donc aussi l'ombre)
-         - cardCornerRadius pour arrondir les angles
-     -->
-
 
     <TextView
         android:id="@+id/hotspot_title"
@@ -92,13 +83,19 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/card_hotspot_image_container">
 
-        <LinearLayout
-            android:id="@+id/hotspot_messages_list_layout"
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="match_parent">
 
-        </LinearLayout>
+            <LinearLayout
+                android:id="@+id/hotspot_messages_list_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+            </LinearLayout>
+
+        </ScrollView>
 
     </android.support.v4.widget.SwipeRefreshLayout>
 

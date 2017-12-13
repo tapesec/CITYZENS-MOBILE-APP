@@ -20,5 +20,12 @@
     <string name="post_hotspot_cancel">Cancel</string>
 
     <string name="post_message">Post</string>
+    <string name="action_new_message">New message</string>
+
+    <string name="post_message_pinned">Pinned</string>
+    <string name="post_message_post">Post</string>
+    <string name="post_message_title">Title</string>
+    <string name="post_message_body">Speak your mind !</string>
+    <string name="post_message_cancel">Nevermind</string>
     
 </resources>
