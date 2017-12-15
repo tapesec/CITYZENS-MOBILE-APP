@@ -11,7 +11,7 @@ import org.json.JSONObject
 class HotspotViewPost(
 		url: String,
 		id: String
-): PostListener{
+): PostListener {
 
 	init {
 		val params = JSONObject("""

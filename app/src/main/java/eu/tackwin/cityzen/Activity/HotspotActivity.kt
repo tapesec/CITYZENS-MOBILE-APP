@@ -2,6 +2,7 @@ package eu.tackwin.cityzen.Activity
 
 import android.support.v7.app.AlertDialog
 import android.os.Bundle
+import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.Menu
@@ -14,8 +15,7 @@ import android.widget.LinearLayout
 import android.widget.Switch
 import android.widget.TextView
 import android.widget.ViewSwitcher
-import eu.tackwin.cityzen.HttpTask.DeleteTask
-import eu.tackwin.cityzen.Model.Hotspots.HotspotInfo
+import eu.tackwin.cityzen.Model.Hotspots.WallHotspotInfo
 import eu.tackwin.cityzen.Model.MessageInfo
 import eu.tackwin.cityzen.R
 import eu.tackwin.cityzen.api.HotspotViewPost
@@ -35,22 +35,27 @@ class HotspotActivity: AppCompatActivity(), MessagesGetListener, MessagePatchLis
 
 	private var deleting = false
 
-	private lateinit var  hotspotInfo: HotspotInfo
-
-	private var messages: MutableList<MessageInfo> = mutableListOf()
+	private lateinit var  hotspotInfo: WallHotspotInfo
 
 	override fun onCreate(savedInstance: Bundle?) {
 		super.onCreate(savedInstance)
 		setContentView(R.layout.activity_hotspot)
-		//setSupportActionBar(findViewById(R.id.action))
 
-		hotspotInfo = intent.getParcelableExtra<HotspotInfo>("hotspot") as HotspotInfo
+		findViewById<SwipeRefreshLayout>(R.id.swipe_refresh).setOnRefreshListener {
+			onMessageRefreshed()
+		}
+
+		hotspotInfo = intent.getParcelableExtra("hotspot")!!
 		populateHotspot(hotspotInfo)
 	}
 
 	override fun onCreateOptionsMenu(menu: Menu?): Boolean {
 		menuInflater.inflate(R.menu.action_hotspot, menu)
 		return true
+	}
+
+	private fun onMessageRefreshed(){
+		populateHotspot(hotspotInfo)
 	}
 
 	override fun onOptionsItemSelected(item: MenuItem?): Boolean {
@@ -68,7 +73,7 @@ class HotspotActivity: AppCompatActivity(), MessagesGetListener, MessagePatchLis
 		alert.setView(view)
 		alert.setPositiveButton(R.string.post_message_post, { _, _ ->
 
-			val title = view.findViewById<EditText>(R.id.title).text.toString()
+			val title = view.findViewById<EditText>(R.id.date).text.toString()
 			val body = view.findViewById<EditText>(R.id.body).text.toString()
 			val pinned = view.findViewById<Switch>(R.id.pinned).isActivated
 
@@ -117,7 +122,7 @@ class HotspotActivity: AppCompatActivity(), MessagesGetListener, MessagePatchLis
 		deleting = !deleting
 	}
 
-	private fun populateHotspot(hotspotInfo: HotspotInfo){
+	private fun populateHotspot(hotspotInfo: WallHotspotInfo){
 		findViewById<TextView>(R.id.hotspot_title)!!.text = hotspotInfo.title
 		findViewById<TextView>(R.id.hotspot_author)!!.text = hotspotInfo.author.pseudo
 
@@ -193,13 +198,28 @@ class HotspotActivity: AppCompatActivity(), MessagesGetListener, MessagePatchLis
 		}
 
 		runOnUiThread{
+			listMessages.removeViews(0, listMessages.childCount)
 			for (i in listViews)
 				listMessages.addView(i)
+
+			findViewById<SwipeRefreshLayout>(R.id.swipe_refresh).isRefreshing = false
 		}
+
+
 	}
 
 	override fun messagesGetFailure() {
+		runOnUiThread {
+			findViewById<SwipeRefreshLayout>(R.id.swipe_refresh).isRefreshing = false
+		}
+	}
 
+	override fun onMessagePosted(msg: MessageInfo) {
+		val v = layoutInflater.inflate(R.layout.message_layout, null)
+		populateMessage(msg, v)
+		runOnUiThread {
+			findViewById<LinearLayout>(R.id.hotspot_messages_list_layout).addView(v)
+		}
 	}
 
 }

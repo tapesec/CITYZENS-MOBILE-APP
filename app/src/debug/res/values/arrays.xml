@@ -5,4 +5,10 @@
         <item>Private</item>
     </string-array>
 
+    <string-array name="post_hotspot_type">
+        <item>Wall</item>
+        <item>Alert</item>
+        <item>Event</item>
+    </string-array>
+
 </resources>

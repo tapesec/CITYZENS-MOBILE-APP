@@ -8,19 +8,19 @@ import eu.tackwin.cityzen.Model.AuthorInfo
  */
 class AlertHotspotInfo(
 	id: String,
-	title: String,
 	id_city: String,
 	scope: Scope,
 	position: LatLng,
 	address_city: String,
 	address_name: String,
-	author: AuthorInfo
+	author: AuthorInfo,
+	message: String
 ) : HotspotInfo(
 	id,
-	title,
 	id_city,
 	scope,
-		Type.ALERT,
+	Type.ALERT,
+	IconType.ACCIDENT,
 	position,
 	address_city,
 	address_name,

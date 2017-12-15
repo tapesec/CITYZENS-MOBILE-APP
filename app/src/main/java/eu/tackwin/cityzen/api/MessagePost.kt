@@ -1,8 +1,12 @@
 package eu.tackwin.cityzen.api
 
+import android.util.Log
 import eu.tackwin.cityzen.HttpTask.PostListener
 import eu.tackwin.cityzen.HttpTask.PostTask
+import eu.tackwin.cityzen.Model.MessageInfo
 import org.json.JSONObject
+import java.nio.charset.Charset
+import java.util.*
 
 /**
  * Created by tackw on 12/12/2017.
@@ -38,10 +42,12 @@ class MessagePost(
 	}
 
 	override fun postComplete(result: ByteArray) {
-		listener?.onMessageFailed()
+		listener?.onMessagePosted(
+			MessageInfo.createFromJson(JSONObject(result.toString(Charset.defaultCharset())))
+		)
 	}
 
 	override fun postFailure(error_code: Int, message: String, response: ByteArray?) {
-		listener?.onMessagePosted()
+		listener?.onMessageFailed()
 	}
 }

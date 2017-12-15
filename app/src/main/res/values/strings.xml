@@ -13,11 +13,13 @@
     <string name="title_activity_maps_activityzzeae">Map</string>
 
     <string name="post_hotspot_title">Title</string>
-    <string name="post_hotspot_insee">INSEE</string>
     <string name="post_hotspot_message">Speak you mind !</string>
-
     <string name="post_hotspot_send">Send</string>
     <string name="post_hotspot_cancel">Cancel</string>
+    <string name="post_hotpsot_date_end">Expiration</string>
+    <string name="post_hotpsot_description">Description</string>
+    <string name="post_hotpsot_message">Message</string>
+
 
     <string name="post_message">Post</string>
     <string name="action_new_message">New message</string>
