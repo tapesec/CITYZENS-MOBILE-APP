@@ -8,15 +8,18 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Button
+import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.Switch
 import android.widget.TextView
 import android.widget.ViewSwitcher
+import eu.tackwin.cityzen.HttpTask.DeleteTask
 import eu.tackwin.cityzen.Model.Hotspots.HotspotInfo
 import eu.tackwin.cityzen.Model.MessageInfo
 import eu.tackwin.cityzen.R
 import eu.tackwin.cityzen.api.HotspotViewPost
+import eu.tackwin.cityzen.api.MessageDelete
 import eu.tackwin.cityzen.api.MessagePatch
 import eu.tackwin.cityzen.api.MessagePatchListener
 import eu.tackwin.cityzen.api.MessagePost
@@ -29,6 +32,8 @@ import java.util.*
  * Created by tackw on 09/12/2017.
  */
 class HotspotActivity: AppCompatActivity(), MessagesGetListener, MessagePatchListener, MessagePostListener {
+
+	private var deleting = false
 
 	private lateinit var  hotspotInfo: HotspotInfo
 
@@ -79,7 +84,37 @@ class HotspotActivity: AppCompatActivity(), MessagesGetListener, MessagePatchLis
 	}
 
 	private fun onDeleteMessage() {
+		val linear_layout = findViewById<LinearLayout>(R.id.hotspot_messages_list_layout)
 
+		if (deleting){
+			val views_to_delete = mutableListOf<View>()
+
+			for (i in 0..(linear_layout.childCount - 1)) {
+				val child = linear_layout.getChildAt(i)
+
+				val checkbox = child.findViewById<CheckBox>(R.id.checkbox_delete)
+				if (checkbox.isChecked) {
+					val mInfo = child.tag!! as MessageInfo
+					views_to_delete.add(child)
+					MessageDelete(resources.getString(R.string.base_url), mInfo.hotspotId, mInfo.id)
+				}
+				checkbox.visibility = View.GONE
+				checkbox.isChecked = false
+			}
+
+			for (i in views_to_delete) {
+				linear_layout.removeView(i)
+			}
+		} else {
+			for (i in 0..(linear_layout.childCount - 1)) {
+				val child = linear_layout.getChildAt(i)
+
+				val checkbox = child.findViewById<CheckBox>(R.id.checkbox_delete)
+				checkbox.visibility = View.VISIBLE
+			}
+		}
+
+		deleting = !deleting
 	}
 
 	private fun populateHotspot(hotspotInfo: HotspotInfo){

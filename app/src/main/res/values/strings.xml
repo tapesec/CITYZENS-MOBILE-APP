@@ -27,5 +27,6 @@
     <string name="post_message_title">Title</string>
     <string name="post_message_body">Speak your mind !</string>
     <string name="post_message_cancel">Nevermind</string>
+    <string name="post_message_delete_checkbox">Delete</string>
     
 </resources>

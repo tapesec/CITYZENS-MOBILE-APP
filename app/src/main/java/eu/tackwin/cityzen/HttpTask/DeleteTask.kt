@@ -12,31 +12,28 @@ import java.net.URLEncoder
 import java.nio.charset.Charset
 import javax.net.ssl.HttpsURLConnection
 
-
 /**
- * Created by tackw on 12/12/2017.
+ * Created by tackw on 15/12/2017.
  */
-class PatchTask(
-		private val patchListener: PatchListener? = null,
-		private val headers: Map<String, String>? = null
+class DeleteTask(
+	private val listener: DeleteTaskListener? = null,
+	private val headers: Map<String, String>? = null
 ) : AsyncTask<JSONObject, Int, ByteArray>() {
 
+
 	override fun doInBackground(vararg args: JSONObject?): ByteArray {
-		if (args.size < 2) return ByteArray(0)
-
-		val arg = args[0] as JSONObject
-
+		val arg = if (args.isNotEmpty()) (args[0] as JSONObject) else JSONObject()
 		if (!arg.has("url")) return ByteArray(0)
 
 		val u = arg["url"] as String
 		arg.remove("url")
 
-		val body = args[1] as JSONObject
+		val body = if (args.size > 1) args[1] as JSONObject else JSONObject()
 
-		return sendPatch(u, arg, body)
+		return sendDelete(u, arg, body)
 	}
 
-	private fun sendPatch(baseUrl: String, params: JSONObject, body: JSONObject): ByteArray {
+	private fun sendDelete(baseUrl: String, params: JSONObject, body: JSONObject): ByteArray {
 		var connection: HttpURLConnection? = null
 
 		try {
@@ -68,14 +65,14 @@ class PatchTask(
 			if (headers != null){
 				for (it in headers.asIterable()){
 					connection.setRequestProperty(
-						URLEncoder.encode(it.key, "UTF-8"),
-						URLEncoder.encode(it.value, "UTF-8")
+							URLEncoder.encode(it.key, "UTF-8"),
+							URLEncoder.encode(it.value, "UTF-8")
 					)
 				}
 			}
 			connection.setRequestProperty("content-type", "application/json")
 
-			setRequestMethod(connection, "PATCH")
+			setRequestMethod(connection, "DELETE")
 			connection.doOutput = true
 
 			var output = StringBuilder()
@@ -109,7 +106,7 @@ class PatchTask(
 
 			BufferedReader(InputStreamReader(connection.inputStream)).use {
 				val response = it.readText().toByteArray()
-				patchListener?.patchComplete()
+				listener?.deleteComplete()
 				return response
 			}
 
@@ -126,17 +123,18 @@ class PatchTask(
 				BufferedReader(InputStreamReader(connection.errorStream)).use {
 					val string = it.readText()
 					val response = string.toByteArray()
-					patchListener?.patchFailure()
+					listener?.deleteFailure()
 					Log.e("response body", string)
 					return response
 				}
 			}
 
-			patchListener?.patchFailure()
+			listener?.deleteFailure()
 
 			return ByteArray(0)
 		}
 	}
+
 
 	private fun setRequestMethod(c: HttpURLConnection, value: String) {
 		try {
